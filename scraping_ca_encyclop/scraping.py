@@ -1,9 +1,12 @@
+import os
 import time
-from bs4 import BeautifulSoup
-import requests
-import pandas as pd
-import random
+import glob
 import pickle
+import random
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
 
 from fake_useragent import UserAgent
 ua = UserAgent()
@@ -95,9 +98,16 @@ def get_url_articles(url):
     df_total["cat1"] = url.split('/')[-3]
     df_total["cat2"] = url.split('/')[-2]
     df_total["cat3"] = url.split('/')[-1]
+    
+    if not os.path.exists("./articles"):
+        os.mkdir('./articles')
+
 
     with open(f'articles/{url.split("/")[-3]}_{url.split("/")[-2]}_{url.split("/")[-1]}.pkl', 'wb') as pickFile:
         pickle.dump(df_total, pickFile)
+
+    logging.info(f'Shape of this url DataFrame : {df_total.shape}')
+    logging.info(f'theme {url.split("/")[-3:]} done')
 
     # return df_total
 
@@ -147,7 +157,6 @@ if __name__ == '__main__':
     for idx,url in enumerate(all_articles_links):
         time.sleep(2)
         get_url_articles(url) #tous les articles de cette thematique
-        logging.info(f'theme {url.split("/")[-3:]} done')
         logging.info(f'Percentage on total links : {round((idx*100)/len(all_articles_links),2)}%')
 
     e = time.time()
@@ -155,3 +164,12 @@ if __name__ == '__main__':
     logging.info(f'all done in {e_s(s,e)} secs')
 
     logging.info(f'all saved at articles')
+
+
+    total = pd.DataFrame()
+    for f in glob.glob('articles/*.pkl'):
+        df = pd.read_pickle(f)
+        total = total.append(df)
+
+    with open('articles/01_total_encyclopedia.pkl','wb') as pick:
+        pickle.dump(total,pick)
