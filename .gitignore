@@ -1,5 +1,15 @@
-scraping_med.py
-scraping_pdf.py
-tts
+old/
+.DS_Store
+scraping_ca_encyclop/article.csv
+scraping_ca_encyclop/encyclop_log.log
+scraping_ca_encyclop/set_total_links.pkl
 
-scraping_ca_encyclop/articles/
+
+# Python
+*.pyc
+*.egg-info/
+.vscode/
+__pycache__/**/*.pyc
+__pycache__/
+.DS_Store
+/**/*.log
